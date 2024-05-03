@@ -12,7 +12,7 @@ variables:
     requests_gpu: 1
     limits_gpu: 1
   whisper:
-    # disabling and reduction of GPU resources is allowed 
+    # disabling and reduction of GPU resources is allowed
     gpu_enabled: "true"
     requests_gpu: 1
     limits_gpu: 1
