@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - bundle: base
-          - bundle: lfai
-          - bundle: swf
+        bundle: [base, lfai, swf]
+        steps:
+        - uses: ../actions/bundle-build/bundle.yaml
+          with:
+            bundle: ${{ matrix.bundle }}
