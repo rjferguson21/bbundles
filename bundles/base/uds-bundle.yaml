@@ -1,0 +1,153 @@
+kind: UDSBundle
+metadata:
+  name: base
+  description: Baseline bundle with zarf init, pod identity webhook, and UDS core
+  architecture: amd64
+  version: 0.2.1
+
+packages:
+  # These are YOLO packages so we deploy pre-zarf-init
+  - name: pod-identity-webhook
+    repository: ghcr.io/defenseunicorns/packages/uds/pod-identity-webhook
+    ref: 0.1.2-amd64
+
+  - name: aws-lb-controller
+    path: ../../
+    ref: "0.1.1"
+
+  - name: init
+    repository: ghcr.io/defenseunicorns/packages/init
+    ref: v0.33.1
+    overrides:
+      zarf-seed-registry:
+        docker-registry:
+          variables:
+            - name: REGISTRY_STORAGE_CLASS
+              path: persistence.storageClass
+              default: "efs"
+      zarf-registry:
+        docker-registry:
+          variables:
+            - name: REGISTRY_STORAGE_CLASS
+              path: persistence.storageClass
+              default: "efs"
+
+  - name: uds-core
+    repository: ghcr.io/defenseunicorns/packages/uds/core
+    ref: 0.20.0-registry1
+    overrides:
+      loki:
+        loki:
+          values:
+            # Override default dns service name for Loki Gateway
+            - path: "global.dnsService"
+              value: "rke2-coredns-rke2-coredns"
+            - path: loki.storage.s3.endpoint
+              value: ""
+            - path: loki.storage.s3.secretAccessKey
+              value: ""
+            - path: loki.storage.s3.accessKeyId
+              value: ""
+          variables:
+            - name: LOKI_CHUNKS_BUCKET
+              description: "The object storage bucket for Loki chunks"
+              path: loki.storage.bucketNames.chunks
+            - name: LOKI_RULER_BUCKET
+              description: "The object storage bucket for Loki ruler"
+              path: loki.storage.bucketNames.ruler
+            - name: LOKI_ADMIN_BUCKET
+              description: "The object storage bucket for Loki admin"
+              path: loki.storage.bucketNames.admin
+            - name: LOKI_S3_REGION
+              description: "The S3 region"
+              path: loki.storage.s3.region
+            - name: LOKI_IRSA_ROLE_ARN
+              description: "The irsa role annotation"
+              path: serviceAccount.annotations.irsa/role-arn
+            - name: LOKI_WRITE_REPLICAS
+              path: write.replicas
+              description: "Loki write replicas"
+              default: "3"
+            - name: LOKI_READ_REPLICAS
+              path: read.replicas
+              description: "Loki read replicas"
+              default: "3"
+            - name: LOKI_BACKEND_REPLICAS
+              path: backend.replicas
+              description: "Loki backend replicas"
+              default: "3"
+
+      velero:
+        velero:
+          variables:
+            - name: VELERO_USE_SECRET
+              description: "Toggle use secret off to use IRSA."
+              path: credentials.useSecret
+            - name: VELERO_IRSA_ROLE_ARN
+              description: "IRSA role arn for annotation"
+              path: serviceAccount.server.annotations.irsa/role-arn
+
+      istio-admin-gateway:
+        gateway:
+          # Assume dynamic IP allocation for now
+          # variables:
+          #   - name: ADMIN_PRIVATE_IP_ALLOCATIONS
+          #     path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-private-ipv4-addresses
+          values:
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-type
+              value: "external"
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-scheme
+              value: "internal"
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-attributes
+              value: "load_balancing.cross_zone.enabled=true"
+        uds-istio-config:
+          variables:
+            - name: ADMIN_TLS_CERT
+              description: "The TLS cert for the admin gateway (must be base64 encoded)"
+              path: tls.cert
+            - name: ADMIN_TLS_KEY
+              description: "The TLS key for the admin gateway (must be base64 encoded)"
+              path: tls.key
+
+      istio-tenant-gateway:
+        gateway:
+          variables:
+            - name: TENANT_EIP_ALLOCATIONS
+              path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-eip-allocations
+          values:
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-type
+              value: "external"
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-scheme
+              value: "internet-facing"
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-attributes
+              value: "load_balancing.cross_zone.enabled=true"
+        uds-istio-config:
+          variables:
+            - name: TENANT_TLS_CERT
+              description: "The TLS cert for the tenant gateway (must be base64 encoded)"
+              path: tls.cert
+            - name: TENANT_TLS_KEY
+              description: "The TLS key for the tenant gateway (must be base64 encoded)"
+              path: tls.key
+
+      istio-passthrough-gateway:
+        gateway:
+          variables:
+            - name: PASSTHROUGH_EIP_ALLOCATIONS
+              path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-eip-allocations
+          values:
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-type
+              value: "external"
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-scheme
+              value: "internet-facing"
+            - path: service.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-attributes
+              value: "load_balancing.cross_zone.enabled=true"
+      keycloak:
+        keycloak:
+          variables:
+            - name: GOOGLE_IDP_ENABLED
+              path: realmInitEnv.GOOGLE_IDP_ENABLED
+            - name: GOOGLE_IDP_CLIENTID
+              path: realmInitEnv.GOOGLE_IDP_CLIENTID
+            - name: GOOGLE_IDP_CLIENT_SECRET
+              path: realmInitEnv.GOOGLE_IDP_CLIENT_SECRET

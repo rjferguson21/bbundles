@@ -1,0 +1,38 @@
+# This is overwritten at deploy time by the config file from secretsmanager
+options:
+  architecture: amd64
+
+variables:
+  init:
+    registry_hpa_enable: true
+    registry_pvc_size: 100Gi
+    registry_pvc_access_mode: ReadWriteMany
+    registry_hpa_auto_size: true
+    registry_storage_class: efs
+    registry_affinity_custom: |
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - docker-registry
+                topologyKey: kubernetes.io/hostname
+  aws-lb-controller:
+    cluster_name: $ENVIRONMENT
+    lb_role_arn: $LB_ROLE_ARN
+  uds-core:
+    tenant_eip_allocations: $TENANT_EIP_ALLOCATIONS
+    passthrough_eip_allocations: $PASSTHROUGH_EIP_ALLOCATIONS
+    loki_chunks_bucket: $LOKI_S3_BUCKET
+    loki_ruler_bucket: $LOKI_S3_BUCKET
+    loki_admin_bucket: $LOKI_S3_BUCKET
+    loki_s3_region: $LOKI_S3_AWS_REGION
+    loki_irsa_role_arn: "${LOKI_S3_ROLE_ARN}"
+    velero_use_secret: false
+    velero_irsa_role_arn: "${VELERO_S3_ROLE_ARN}"
+    velero_bucket: $VELERO_S3_BUCKET
+    velero_bucket_region: $VELERO_S3_AWS_REGION

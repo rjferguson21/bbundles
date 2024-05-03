@@ -1,0 +1,26 @@
+tasks:
+  - name: base
+    actions:
+      - description: Create the AWS LB Package
+        cmd: ./uds zarf package create src/aws-lb-controller/ --confirm --no-progress --tmpdir=/var/tmp/uds
+
+      - description: Create the base UDS bundle
+        cmd: ./uds create bundles/base/ --confirm --no-progress --tmpdir=/var/tmp/uds
+
+  - name: swf
+    description: Create the SWF bundle
+    actions:
+      - description: Create the SWF Dependencies Package
+        cmd: ./uds zarf package create src/swf-deps-aws/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds
+      
+      - description: Create the SWF bundle
+        cmd: ./uds create bundles/swf/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds
+
+  - name: lfai
+    description: Create the LFAI bundle
+    actions:
+      - description: Create the GPU-Operator Package
+        cmd: ./uds zarf package create src/gpu-operator/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds
+      
+      - description: Create the LFAI bundle
+        cmd: ./uds create bundles/lfai/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds

@@ -1,0 +1,64 @@
+kind: UDSBundle
+metadata:
+  name: swf
+  description: A UDS bundle for deploying the UDS Software Factory
+  version: 0.1.0
+
+packages:
+  - name: swf-deps-aws
+    path: ../../
+    ref: "0.1.0"
+  
+  - name: gitlab
+    repository: ghcr.io/defenseunicorns/packages/uds/gitlab
+    ref: 16.10.1-uds.1-registry1
+    overrides:
+      gitlab:
+        gitlab:
+          variables:
+            - name: REGISTRY_ROLE_ARN
+              description: "The ARN of the role to assume for the registry pods"
+              path: registry.serviceAccount.annotations.irsa/role-arn
+            - name: SIDEKIQ_ROLE_ARN
+              description: "The ARN of the role to assume for the sidekiq pods"
+              path: gitlab.sidekiq.serviceAccount.annotations.irsa/role-arn
+            - name: WEBSERVICE_ROLE_ARN
+              description: "The ARN of the role to assume for the web service pods"
+              path: gitlab.webservice.serviceAccount.annotations.irsa/role-arn
+            - name: TOOLBOX_ROLE_ARN
+              description: "The ARN of the role to assume for the toolbox pods"
+              path: gitlab.toolbox.serviceAccount.annotations.irsa/role-arn
+
+  - name: gitlab-runner
+    repository: ghcr.io/defenseunicorns/packages/uds/gitlab-runner
+    ref: 16.10.0-uds.0-registry1
+
+  - name: sonarqube
+    repository: ghcr.io/defenseunicorns/packages/uds/sonarqube
+    ref: 8.0.3-uds.6-registry1
+
+  - name: mattermost
+    repository: ghcr.io/defenseunicorns/packages/uds/mattermost
+    ref: 9.6.1-uds.0-registry1
+    overrides:
+      mattermost:
+        uds-mattermost-config:
+          variables:
+            - name: MATTERMOST_DB_ENDPOINT
+              path: "postgres.host"
+            - name: MATTERMOST_DB_PASSWORD
+              path: "postgres.password"
+            - name: MATTERMOST_BUCKET
+              path: "objectStorage.bucket"
+            - name: MATTERMOST_REGION
+              path: "objectStorage.region"
+            - name: MATTERMOST_S3_ENDPOINT
+              path: "objectStorage.endpoint"
+          # Enable plugin uploads for MM AI plugin
+          values:
+            - path: "config.enablePluginUploads"
+              value: "true"
+        mattermost-enterprise-edition:
+          variables:
+            - name: MATTERMOST_ROLE_ARN
+              path: "serviceAccount.annotations.irsa/role-arn"
