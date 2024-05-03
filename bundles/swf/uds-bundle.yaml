@@ -8,7 +8,7 @@ packages:
   - name: swf-deps-aws
     path: ../../
     ref: "0.1.0"
-  
+
   - name: gitlab
     repository: ghcr.io/defenseunicorns/packages/uds/gitlab
     ref: 16.10.1-uds.1-registry1
