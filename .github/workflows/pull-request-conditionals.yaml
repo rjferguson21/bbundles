@@ -10,11 +10,8 @@ jobs:
   lint-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
-      - name: Install UDS CLI
-        shell: bash
-        # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
-        run: brew install defenseunicorns/tap/uds@0.10.4
+      - uses: actions/checkout@v4
+      - name: Setup environment
+        uses: ./.github/actions/setup
       - name: Run Formatting Checks
         run: uds run lint-check --no-progress
