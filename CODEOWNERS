@@ -1,0 +1,13 @@
+# At least for now, assign code ownership for the entire repository to a specific GitHub group
+* @defenseunicorns/uds-staging
+
+/bundles/base/* @defenseunicorns/uds-core
+
+/bundles/lfai/* @defenseunicorns/leapfrogai
+
+/bundles/swf/* @defenseunicorns/swf
+/terraform/swf/* @defenseunicorns/swf
+
+# Additional privileged files
+/CODEOWNERS @jeff-mccoy @austenbryan
+/LICENSE @jeff-mccoy @austenbryan

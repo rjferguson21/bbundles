@@ -1,0 +1,41 @@
+name: Test LFAI Bundle
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  bundle_checks:
+    # This will need to be on uds-ubuntu-big-boy-8-core when we move off of the bastion self-hosted runner and can no
+    # longer run tests in PR on the ARC runner
+    runs-on: "uds-ubuntu-big-boy-8-core"
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Setup runner
+        shell: bash
+        run: uds run --no-progress setup-env
+        env:
+          ENVIRONMENT: ${{ inputs.environment }}
+
+      - name: GHCR Login
+        run: uds zarf tools registry login -u "dummy" -p "${{ secrets.GITHUB_TOKEN }}" ghcr.io
+
+      - name: Test creation of the lfai bundle
+        shell: bash
+        run: uds run --no-progress create-lfai
+
+      - name: Save logs
+        if: always()
+        uses: ./.github/actions/save-logs
+        with:
+          suffix: -lfai-bundle-checks

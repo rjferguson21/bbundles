@@ -1,0 +1,67 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>defenseunicorns/uds-common//config/renovate.json5",
+    ":semanticCommits",
+    ":semanticPrefixFixDepsChoreOthers",
+    "group:all",
+    "replacements:all",
+    "workarounds:all"
+  ],
+  "branchConcurrentLimit": 0,
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "packageRules": [
+    {
+      "groupName": "Bootstrap Terraform",
+      "commitMessageTopic": "bootstrap-tf",
+      "matchFileNames": ["terraform/bootstrap/**"]
+    },
+    {
+      "groupName": "Cluster Terraform",
+      "commitMessageTopic": "cluster-tf",
+      "matchFileNames": ["terraform/cluster/**"]
+    },
+    {
+      "groupName": "IRSA Terraform",
+      "commitMessageTopic": "irsa-tf",
+      "matchFileNames": ["terraform/irsa/**","modules/irsa-s3/**"]
+    },
+    {
+      "groupName": "Runner Terraform",
+      "commitMessageTopic": "runner-tf",
+      "matchFileNames": ["terraform/runner/**"]
+    },
+    {
+      "groupName": "SWF Terraform",
+      "commitMessageTopic": "swf-tf",
+      "matchFileNames": ["terraform/swf/**"]
+    },
+    {
+      "groupName": "VPC Terraform",
+      "commitMessageTopic": "vpc-tf",
+      "matchFileNames": ["terraform/vpc/**"]
+    },
+    {
+      "groupName": "Base Bundle",
+      "commitMessageTopic": "base-bundle",
+      "matchFileNames": ["bundles/base/**","src/aws-lb-controller/**"]
+    },
+    {
+      "groupName": "LFAI Bundle",
+      "commitMessageTopic": "lfai-bundle",
+      "matchFileNames": ["bundles/lfai/**","src/gpu-operator/**"]
+    },
+    {
+      "groupName": "SWF Bundle",
+      "commitMessageTopic": "swf-bundle",
+      "matchFileNames": ["bundles/swf/**","src/swf-deps-aws/**"]
+    },
+    {
+      "matchFileNames": [".github/**"],
+      "groupName": "githubactions",
+      "commitMessageTopic": "githubactions",
+      "pinDigests": true
+    }
+  ]
+}
