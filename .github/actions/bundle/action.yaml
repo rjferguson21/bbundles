@@ -1,0 +1,34 @@
+name: bundle-build
+
+inputs:
+  bundle:
+    description: 'Bundle to test'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup environment
+      uses: ./.github/actions/setup
+
+    - name: Setup runner
+      shell: bash
+      run: uds run --no-progress setup-env
+      env:
+        ENVIRONMENT: ${{ inputs.environment }}
+
+    - name: GHCR Login
+      shell: bash
+      run: uds zarf tools registry login -u "dummy" -p "${{ secrets.GITHUB_TOKEN }}" ghcr.io
+
+    - name: Test creation of base bundle
+      shell: bash
+      run: uds run --no-progress create-base
+
+    - name: Save logs
+      if: always()
+      uses: ./.github/actions/save-logs
+      with:
+        suffix: -${{ inputs.bundle }}

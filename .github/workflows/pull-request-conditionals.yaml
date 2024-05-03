@@ -23,6 +23,7 @@ jobs:
       matrix:
         bundle: [base, lfai, swf]
     steps:
-    - uses: ./.github/actions/bundle-build
-      with:
-        bundle: ${{ matrix.bundle }}
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/bundle
+        with:
+          bundle: ${{ matrix.bundle }}
