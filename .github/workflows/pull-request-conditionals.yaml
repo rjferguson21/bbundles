@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         bundle: [base, lfai, swf]
-        steps:
-        - uses: ../actions/bundle-build/bundle.yaml
-          with:
-            bundle: ${{ matrix.bundle }}
+    steps:
+    - uses: ../actions/bundle-build/bundle.yaml
+      with:
+        bundle: ${{ matrix.bundle }}
