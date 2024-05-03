@@ -15,3 +15,13 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run Formatting Checks
         run: uds run lint-check --no-progress
+
+  matrix-build:
+    needs: lint-check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - bundle: base
+          - bundle: lfai
+          - bundle: swf

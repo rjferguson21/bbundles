@@ -1,16 +1,21 @@
-name: Test SWF Bundle
-on:
-  pull_request:
-    # milestoned is added here as a workaround for release-please not triggering PR workflows (PRs should be added to a milestone to trigger the workflow).
-    types: [milestoned, opened, reopened, synchronize]
+name: Reusable Test Bundle Workflow
 
-permissions:
-  contents: read
+on:
+  workflow_call:
+    inputs:
+      bundle:
+        type: string
+        description: 'Bundle to test'
+        required: true
+      runsOn:
+        type: string
+        description: 'Type of runner that the job will run on'
+        required: true
+        default: 'ubuntu-latest'
 
 jobs:
   bundle_checks:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    runs-on: ${{ inputs.runsOn }}
     steps:
       - uses: actions/checkout@v4
 
@@ -26,12 +31,12 @@ jobs:
       - name: GHCR Login
         run: uds zarf tools registry login -u "dummy" -p "${{ secrets.GITHUB_TOKEN }}" ghcr.io
 
-      - name: Test creation of the swf bundle
+      - name: Test creation of base bundle
         shell: bash
-        run: uds run --no-progress create-swf
+        run: uds run --no-progress create-base
 
       - name: Save logs
         if: always()
         uses: ./.github/actions/save-logs
         with:
-          suffix: -swf-bundle-checks
+          suffix: -${{ inputs.bundle }}

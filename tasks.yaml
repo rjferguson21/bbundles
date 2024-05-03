@@ -1,7 +1,6 @@
 includes:
   - system-setup: ./tasks/setup.yaml
   - create: ./tasks/create.yaml
-  - deploy: ./tasks/deploy.yaml
   - destroy: ./tasks/destroy.yaml
   - lint: ./tasks/lint.yaml
 
@@ -10,45 +9,17 @@ tasks:
     actions:
       - task: system-setup:env
 
-  - name: setup-kubeconfig
-    actions:
-      - task: system-setup:kubeconfig
-
   - name: create-base
     actions:
       - task: create:base
-
-  - name: deploy-base
-    actions:
-      - task: deploy:base
-
-  - name: destroy-base
-    actions:
-      - task: destroy:base
 
   - name: create-swf
     actions:
       - task: create:swf
 
-  - name: deploy-swf
-    actions:
-      - task: deploy:swf
-
-  - name: destroy-swf
-    actions:
-      - task: destroy:swf
-
   - name: create-lfai
     actions:
       - task: create:lfai
-
-  - name: deploy-lfai
-    actions:
-      - task: deploy:lfai
-
-  - name: destroy-lfai
-    actions:
-      - task: destroy:lfai
 
   - name: lint-check
     actions:
