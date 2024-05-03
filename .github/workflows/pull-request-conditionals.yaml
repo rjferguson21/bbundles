@@ -23,6 +23,6 @@ jobs:
       matrix:
         bundle: [base, lfai, swf]
     steps:
-    - uses: ../actions/bundle-build/bundle.yaml
+    - uses: ./.github/actions/bundle-build
       with:
         bundle: ${{ matrix.bundle }}
