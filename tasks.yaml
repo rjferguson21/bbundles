@@ -50,6 +50,6 @@ tasks:
     actions:
       - task: destroy:lfai
 
-  - name: linter
+  - name: lint-check
     actions:
       - task: lint:check
