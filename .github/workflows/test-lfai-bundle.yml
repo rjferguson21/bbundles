@@ -9,9 +9,7 @@ permissions:
 
 jobs:
   bundle_checks:
-    # This will need to be on uds-ubuntu-big-boy-8-core when we move off of the bastion self-hosted runner and can no
-    # longer run tests in PR on the ARC runner
-    runs-on: "uds-ubuntu-big-boy-8-core"
+    runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
