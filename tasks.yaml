@@ -3,6 +3,7 @@ includes:
   - create: ./tasks/create.yaml
   - deploy: ./tasks/deploy.yaml
   - destroy: ./tasks/destroy.yaml
+  - lint: ./tasks/lint.yaml
 
 tasks:
   - name: setup-env
@@ -48,3 +49,7 @@ tasks:
   - name: destroy-lfai
     actions:
       - task: destroy:lfai
+
+  - name: linter
+    actions:
+      - task: lint:check
