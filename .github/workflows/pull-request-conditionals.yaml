@@ -1,0 +1,26 @@
+name: Filter
+
+# This workflow is triggered on pull requests
+on:
+  pull_request:
+    # milestoned is added here as a workaround for release-please not triggering PR workflows (PRs should be added to a milestone to trigger the workflow).
+    types: [milestoned, opened, reopened, synchronize]
+
+jobs:
+  lint-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup environment
+        uses: ./.github/actions/setup
+      - name: Run Formatting Checks
+        run: uds run lint-check --no-progress
+
+  matrix-build:
+    needs: lint-check
+    strategy:
+      matrix:
+        bundle: [base, lfai, swf]
+    uses: ./.github/workflows/bundle-callable.yaml
+    with:
+      bundle: ${{ matrix.bundle }}

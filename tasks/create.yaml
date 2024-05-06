@@ -12,7 +12,7 @@ tasks:
     actions:
       - description: Create the SWF Dependencies Package
         cmd: ./uds zarf package create src/swf-deps-aws/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds
-      
+
       - description: Create the SWF bundle
         cmd: ./uds create bundles/swf/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds
 
@@ -21,6 +21,6 @@ tasks:
     actions:
       - description: Create the GPU-Operator Package
         cmd: ./uds zarf package create src/gpu-operator/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds
-      
+
       - description: Create the LFAI bundle
         cmd: ./uds create bundles/lfai/ --confirm --no-progress --architecture=${ZARF_ARCHITECTURE} --tmpdir=/var/tmp/uds

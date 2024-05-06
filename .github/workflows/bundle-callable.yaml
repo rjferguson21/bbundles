@@ -1,8 +1,8 @@
-name: Test Base Bundle
+name: Plan Bundle
 on:
   workflow_call:
     inputs:
-      environment:
+      bundle:
         required: true
         type: string
 
@@ -11,8 +11,9 @@ permissions:
 
 jobs:
   bundle_checks:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    name: ${{ inputs.bundle }} checks
+    # LFAI needs to be on uds-ubuntu-big-boy-8-core due to filesystem space limitations on free runners
+    runs-on: "${{ inputs.bundle == 'lfai' && 'uds-ubuntu-big-boy-8-core' || 'ubuntu-latest'}}"
     steps:
       - uses: actions/checkout@v4
 
@@ -22,18 +23,16 @@ jobs:
       - name: Setup runner
         shell: bash
         run: uds run --no-progress setup-env
-        env:
-          ENVIRONMENT: ${{ inputs.environment }}
 
       - name: GHCR Login
         run: uds zarf tools registry login -u "dummy" -p "${{ secrets.GITHUB_TOKEN }}" ghcr.io
 
-      - name: Test creation of base bundle
+      - name: Test creation of bundle
         shell: bash
-        run: uds run --no-progress create-base
+        run: uds run --no-progress create-${{ inputs.bundle }}
 
       - name: Save logs
         if: always()
         uses: ./.github/actions/save-logs
         with:
-          suffix: -base-bundle-checks
+          suffix: -${{ inputs.bundle }}-bundle-checks
