@@ -24,6 +24,6 @@ jobs:
         bundle: [base, lfai, swf]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/bundle
+      - uses: ./.github/workflows/plan-bundle-callable.yaml
         with:
           bundle: ${{ matrix.bundle }}
