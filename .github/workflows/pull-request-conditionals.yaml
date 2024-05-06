@@ -18,12 +18,9 @@ jobs:
 
   matrix-build:
     needs: lint-check
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         bundle: [base, lfai, swf]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/workflows/plan-bundle-callable.yaml
-        with:
-          bundle: ${{ matrix.bundle }}
+    uses: ./.github/workflows/bundle-callable.yaml
+    with:
+      bundle: ${{ matrix.bundle }}
